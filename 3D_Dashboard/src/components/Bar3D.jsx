@@ -17,6 +17,7 @@ const Bar3D = ({
   const setTooltipData = useChartStore((state) => state.setTooltipData)
   
   const startTimeRef = useRef(Date.now() + animationDelay)
+  const glowRef = useRef()
   
   useFrame(() => {
     if (!meshRef.current) return
@@ -31,6 +32,11 @@ const Bar3D = ({
     // Grow from the base: scale Y and move center upward as height increases.
     meshRef.current.scale.y = easeProgress
     meshRef.current.position.y = (height * easeProgress) / 2
+
+    if (glowRef.current) {
+      glowRef.current.scale.y = 0.7 + easeProgress * 0.3
+      glowRef.current.position.y = (height * easeProgress) / 2
+    }
     
     // Smooth hover effect on X and Z
     const targetScale = isHovered ? 1.08 : 1
@@ -96,36 +102,59 @@ const Bar3D = ({
         receiveShadow
         position={[0, 0, 0]}
       >
-        <boxGeometry args={[0.75, height, 0.75]} />
-        <meshStandardMaterial
+        <boxGeometry args={[0.86, height, 0.86]} />
+        <meshPhysicalMaterial
           color={color}
-          metalness={0.4}
-          roughness={0.3}
+          metalness={0.35}
+          roughness={0.2}
+          clearcoat={0.9}
+          clearcoatRoughness={0.14}
           emissive={isHovered ? baseColor : 0x000000}
-          emissiveIntensity={isHovered ? 0.4 : 0}
-          wireframe={false}
+          emissiveIntensity={isHovered ? 0.44 : 0.08}
         />
       </mesh>
       
       {/* Glow effect for hovered bar */}
       {isHovered && (
-        <mesh position={[0, height / 2, 0]}>
-          <boxGeometry args={[0.85, height + 0.1, 0.85]} />
+        <mesh ref={glowRef} position={[0, height / 2, 0]}>
+          <boxGeometry args={[0.95, height + 0.18, 0.95]} />
           <meshBasicMaterial
             color={baseColor}
             transparent
-            opacity={0.05}
+            opacity={0.1}
           />
         </mesh>
       )}
+
+      <mesh position={[0, height + 0.03, 0]}>
+        <cylinderGeometry args={[0.26, 0.34, 0.06, 32]} />
+        <meshStandardMaterial
+          color={isHovered ? 0xdce7ff : 0x9fb3d8}
+          emissive={isHovered ? baseColor : 0x000000}
+          emissiveIntensity={isHovered ? 0.3 : 0}
+          metalness={0.7}
+          roughness={0.22}
+        />
+      </mesh>
       
       {/* Base platform for each bar */}
       <mesh position={[0, -0.05, 0]} receiveShadow>
-        <cylinderGeometry args={[0.5, 0.5, 0.1, 16]} />
+        <cylinderGeometry args={[0.56, 0.62, 0.11, 28]} />
         <meshStandardMaterial
-          color={0x1e293b}
-          metalness={0.2}
-          roughness={0.7}
+          color={0x15243f}
+          metalness={0.45}
+          roughness={0.45}
+        />
+      </mesh>
+
+      <mesh position={[0, 0.01, 0]}>
+        <torusGeometry args={[0.5, 0.02, 10, 48]} />
+        <meshStandardMaterial
+          color={isHovered ? baseColor : 0x2b466f}
+          emissive={isHovered ? baseColor : 0x000000}
+          emissiveIntensity={isHovered ? 0.38 : 0}
+          metalness={0.6}
+          roughness={0.3}
         />
       </mesh>
     </group>

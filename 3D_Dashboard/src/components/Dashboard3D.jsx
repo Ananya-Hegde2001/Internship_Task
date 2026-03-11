@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { ContactShadows, Environment, OrbitControls, Text } from '@react-three/drei'
 import Bar3D from './Bar3D'
 import CameraController from './CameraController'
 import { useChartStore } from '../store/chartStore'
@@ -34,77 +34,87 @@ const formatCompactUSD = (value) =>
 const Scene = () => {
   // Calculate max value for scaling
   const maxValue = Math.max(...DATA.map((d) => d.value))
-  const spacing = 2
+  const spacing = 1.45
   const totalWidth = (DATA.length - 1) * spacing
   const startX = -totalWidth / 2
   
   return (
     <>
       <CameraController />
-      
-      {/* Lighting - Enhanced for visibility */}
-      <ambientLight intensity={1.5} color={0xffffff} />
-      <directionalLight
-        position={[20, 20, 10]}
-        intensity={1.2}
+
+      {/* Premium cinematic lighting */}
+      <ambientLight intensity={0.48} color={0xc8d8ff} />
+      <spotLight
+        position={[0, 12, 7]}
+        intensity={2.2}
+        angle={0.44}
+        penumbra={0.7}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-20}
-        shadow-camera-right={20}
-        shadow-camera-top={20}
-        shadow-camera-bottom={-20}
+        color={0x9ec5ff}
       />
-      <pointLight position={[-15, 10, -15]} intensity={0.8} color={0x8b5cf6} />
-      <pointLight position={[0, 15, 0]} intensity={0.5} color={0x3b82f6} />
+      <pointLight position={[-8, 3.5, -3]} intensity={0.95} color={0x16d5b5} />
+      <pointLight position={[9, 5, 4]} intensity={0.75} color={0x6fa0ff} />
+
+      <Environment preset="night" />
       
-      {/* Grid and floor for reference */}
-      <gridHelper args={[30, 60]} position={[0, -3.1, 0]} />
+      {/* Floor and reference plane */}
+      <gridHelper args={[14, 28, '#6f7f9b', '#2c3551']} position={[0, -0.02, 0]} />
       
       {/* Ground plane */}
-      <mesh position={[0, -3.1, 0]} receiveShadow>
-        <planeGeometry args={[40, 40]} />
+      <mesh position={[0, -0.03, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[8.2, 64]} />
         <meshStandardMaterial
-          color={0x0f172a}
-          metalness={0.05}
-          roughness={0.95}
+          color={0x070f22}
+          metalness={0.25}
+          roughness={0.68}
         />
       </mesh>
-      
-      {/* Background backdrop */}
-      <mesh position={[0, 0, -15]}>
-        <planeGeometry args={[50, 50]} />
-        <meshBasicMaterial color={0x0f172a} />
-      </mesh>
+
+      <ContactShadows position={[0, -0.02, 0]} opacity={0.45} scale={12} blur={2.2} far={3.8} />
       
       {/* Bars */}
       {DATA.map((item, index) => {
-        const normalizedHeight = (item.value / maxValue) * 3.5
+        const normalizedHeight = (item.value / maxValue) * 2.75
         const xPosition = startX + index * spacing
         
         return (
-          <Bar3D
-            key={index}
-            index={index}
-            position={[xPosition, 0, 0]}
-            height={normalizedHeight}
-            label={item.month}
-            value={item.value}
-            animationDelay={index * 80}
-          />
+          <group key={index}>
+            <Bar3D
+              index={index}
+              position={[xPosition, 0, 0]}
+              height={normalizedHeight}
+              label={item.month}
+              value={item.value}
+              animationDelay={index * 90}
+            />
+            <Text
+              position={[xPosition, -0.35, 0.42]}
+              fontSize={0.15}
+              color="#7f90af"
+              anchorX="center"
+              anchorY="middle"
+            >
+              {item.month}
+            </Text>
+          </group>
         )
       })}
       
       {/* Orbit Controls */}
       <OrbitControls
         enableZoom={true}
-        enablePan={true}
+        enablePan={false}
         autoRotate={true}
-        autoRotateSpeed={1.5}
-        minDistance={12}
-        maxDistance={25}
-        dampingFactor={0.05}
+        autoRotateSpeed={0.55}
+        minDistance={6.4}
+        maxDistance={11}
+        minPolarAngle={0.9}
+        maxPolarAngle={1.55}
+        dampingFactor={0.08}
         enableDamping={true}
+        target={[0, 1, 0]}
       />
     </>
   )
@@ -156,7 +166,7 @@ const Dashboard3D = () => {
 
           <Canvas
             className="canvas-3d"
-            camera={{ position: [8, 6, 10], fov: 60 }}
+            camera={{ position: [0, 2.7, 7.8], fov: 46 }}
             shadows
             dpr={[1, 1.5]}
             gl={{
@@ -166,6 +176,7 @@ const Dashboard3D = () => {
             }}
           >
             <color attach="background" args={['#050b1c']} />
+            <fog attach="fog" args={['#050b1c', 8, 20]} />
             <Suspense fallback={null}>
               <Scene />
             </Suspense>

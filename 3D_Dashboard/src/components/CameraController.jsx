@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
-import * as THREE from 'three'
 
 const CameraController = () => {
   const { camera } = useThree()
   
   useEffect(() => {
-    // Set initial camera position with nice angle
-    camera.position.set(5, 4, 8)
-    camera.lookAt(0, 0, 0)
+    // Framed to keep bars dominant and centered in panel.
+    camera.position.set(0, 2.7, 7.8)
+    camera.lookAt(0, 1, 0)
   }, [camera])
   
   return null
