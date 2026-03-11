@@ -12,7 +12,7 @@ const DATA = [
   { month: 'Feb', value: 52000 },
   { month: 'Mar', value: 48000 },
   { month: 'Apr', value: 61000 },
-  { month: 'May', value: 55000 },
+  { month: 'May', value: 100000 },
   { month: 'Jun', value: 67000 },
   { month: 'Jul', value: 72000 },
   { month: 'Aug', value: 68000 },
@@ -173,10 +173,16 @@ const Scene = () => {
               value={item.value}
               animationDelay={index * 90}
             />
+            <mesh position={[xPosition, 0.13, 0.88]}>
+              <planeGeometry args={[0.72, 0.22]} />
+              <meshBasicMaterial color={0x0a1a34} transparent opacity={0.5} />
+            </mesh>
             <Text
-              position={[xPosition, -0.34, 0.58]}
-              fontSize={0.18}
-              color="#d4def1"
+              position={[xPosition, 0.13, 0.9]}
+              fontSize={0.19}
+              color="#f3f7ff"
+              outlineWidth={0.006}
+              outlineColor="#1c325a"
               anchorX="center"
               anchorY="middle"
             >
