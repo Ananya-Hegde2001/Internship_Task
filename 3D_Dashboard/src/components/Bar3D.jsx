@@ -18,6 +18,7 @@ const Bar3D = ({
   
   const startTimeRef = useRef(Date.now() + animationDelay)
   const glowRef = useRef()
+  const outlineRef = useRef()
   
   useFrame(() => {
     if (!meshRef.current) return
@@ -36,6 +37,18 @@ const Bar3D = ({
     if (glowRef.current) {
       glowRef.current.scale.y = 0.7 + easeProgress * 0.3
       glowRef.current.position.y = (height * easeProgress) / 2
+
+      if (isHovered) {
+        const pulse = 0.11 + 0.07 * Math.sin(elapsed * 0.015)
+        glowRef.current.material.opacity = pulse
+      }
+    }
+
+    if (outlineRef.current) {
+      outlineRef.current.position.y = (height * easeProgress) / 2
+      if (isHovered) {
+        outlineRef.current.material.opacity = 0.55 + 0.2 * Math.sin(elapsed * 0.02)
+      }
     }
     
     // Smooth hover effect on X and Z
@@ -122,6 +135,18 @@ const Bar3D = ({
             color={baseColor}
             transparent
             opacity={0.1}
+          />
+        </mesh>
+      )}
+
+      {isHovered && (
+        <mesh ref={outlineRef} position={[0, height / 2, 0]}>
+          <boxGeometry args={[0.98, height + 0.22, 0.98]} />
+          <meshBasicMaterial
+            color={0xe8f1ff}
+            transparent
+            opacity={0.6}
+            wireframe
           />
         </mesh>
       )}
