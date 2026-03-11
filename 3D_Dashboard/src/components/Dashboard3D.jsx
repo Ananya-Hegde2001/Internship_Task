@@ -16,6 +16,10 @@ const DATA = [
   { month: 'Jun', value: 67000 },
   { month: 'Jul', value: 72000 },
   { month: 'Aug', value: 68000 },
+  { month: 'Sep', value: 41000 },
+  { month: 'Oct', value: 80000 },
+  { month: 'Nov', value: 65000 },
+  { month: 'Dec', value: 94000 },
 ]
 
 const TOTAL_REVENUE = DATA.reduce((sum, item) => sum + item.value, 0)
@@ -31,12 +35,27 @@ const formatCompactUSD = (value) =>
     maximumFractionDigits: 0,
   }).format(value)
 
+const formatAxisUSD = (value) =>
+  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
+    maximumFractionDigits: 0,
+  }).format(value)
+
 const Scene = () => {
   // Calculate max value for scaling
   const maxValue = Math.max(...DATA.map((d) => d.value))
+  const tickCount = 4
+  const axisStepValue = Math.ceil(maxValue / tickCount / 5000) * 5000
+  const axisMaxValue = axisStepValue * tickCount
+  const chartHeight = 2.75
   const spacing = 1.45
   const totalWidth = (DATA.length - 1) * spacing
   const startX = -totalWidth / 2
+  const axisX = startX - 1.25
+  const guideWidth = totalWidth + 1.5
+  const tickValues = Array.from({ length: tickCount + 1 }, (_, index) => index * axisStepValue)
   
   return (
     <>
@@ -73,10 +92,75 @@ const Scene = () => {
       </mesh>
 
       <ContactShadows position={[0, -0.02, 0]} opacity={0.45} scale={12} blur={2.2} far={3.8} />
+
+      {/* Axis system and value scale */}
+      <mesh position={[axisX, chartHeight / 2, 0]}>
+        <boxGeometry args={[0.035, chartHeight + 0.12, 0.035]} />
+        <meshStandardMaterial color={0x2e405f} metalness={0.45} roughness={0.35} />
+      </mesh>
+
+      <mesh position={[0, 0.001, 0]}>
+        <boxGeometry args={[guideWidth, 0.028, 0.028]} />
+        <meshStandardMaterial color={0x233552} metalness={0.4} roughness={0.42} />
+      </mesh>
+
+      {tickValues.map((tickValue, index) => {
+        const tickY = (tickValue / axisMaxValue) * chartHeight
+        const isBase = index === 0
+
+        return (
+          <group key={tickValue}>
+            <mesh position={[axisX + guideWidth / 2 - 0.02, tickY, -0.48]}>
+              <boxGeometry args={[guideWidth, 0.018, 0.018]} />
+              <meshBasicMaterial
+                color={isBase ? 0x32496f : 0x27405f}
+                transparent
+                opacity={isBase ? 0.52 : 0.24}
+              />
+            </mesh>
+
+            <mesh position={[axisX, tickY, 0]}>
+              <boxGeometry args={[0.14, 0.022, 0.022]} />
+              <meshStandardMaterial color={0x5b7296} metalness={0.5} roughness={0.35} />
+            </mesh>
+
+            <Text
+              position={[axisX - 0.38, tickY, 0.1]}
+              fontSize={0.13}
+              color={isBase ? '#d0dbef' : '#95a8c8'}
+              anchorX="right"
+              anchorY="middle"
+            >
+              {formatAxisUSD(tickValue)}
+            </Text>
+          </group>
+        )
+      })}
+
+      <Text
+        position={[axisX - 0.95, chartHeight / 2, 0.08]}
+        rotation={[0, 0, Math.PI / 2]}
+        fontSize={0.15}
+        color="#8fa6c8"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Revenue (USD)
+      </Text>
+
+      <Text
+        position={[0, -0.62, 0.52]}
+        fontSize={0.16}
+        color="#8fa6c8"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Months
+      </Text>
       
       {/* Bars */}
       {DATA.map((item, index) => {
-        const normalizedHeight = (item.value / maxValue) * 2.75
+        const normalizedHeight = (item.value / axisMaxValue) * chartHeight
         const xPosition = startX + index * spacing
         
         return (
@@ -90,13 +174,23 @@ const Scene = () => {
               animationDelay={index * 90}
             />
             <Text
-              position={[xPosition, -0.35, 0.42]}
-              fontSize={0.15}
-              color="#7f90af"
+              position={[xPosition, -0.34, 0.58]}
+              fontSize={0.18}
+              color="#d4def1"
               anchorX="center"
               anchorY="middle"
             >
               {item.month}
+            </Text>
+
+            <Text
+              position={[xPosition, normalizedHeight + 0.22, 0.18]}
+              fontSize={0.11}
+              color="#7fa0cf"
+              anchorX="center"
+              anchorY="middle"
+            >
+              {formatAxisUSD(item.value)}
             </Text>
           </group>
         )
@@ -108,8 +202,8 @@ const Scene = () => {
         enablePan={false}
         autoRotate={true}
         autoRotateSpeed={0.55}
-        minDistance={6.4}
-        maxDistance={11}
+        minDistance={4.8}
+        maxDistance={9.25}
         minPolarAngle={0.9}
         maxPolarAngle={1.55}
         dampingFactor={0.08}
@@ -132,14 +226,14 @@ const Dashboard3D = () => {
             <span>LIVE DASHBOARD</span>
           </div>
           <h1>Monthly Sales Overview</h1>
-          <p>Interactive 3D revenue visualization • FY 2024</p>
+          <p>Interactive 3D revenue visualization • FY 2026</p>
         </header>
 
         <section className="metric-grid" aria-label="Sales summary metrics">
           <article className="metric-card">
             <span className="metric-label">Total Revenue</span>
             <strong className="metric-value">{formatCompactUSD(TOTAL_REVENUE)}</strong>
-            <span className="metric-sub">FY 2024</span>
+            <span className="metric-sub">FY 2026</span>
           </article>
           <article className="metric-card">
             <span className="metric-label">Monthly Avg</span>

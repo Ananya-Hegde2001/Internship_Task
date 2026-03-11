@@ -6,7 +6,7 @@ const CameraController = () => {
   
   useEffect(() => {
     // Framed to keep bars dominant and centered in panel.
-    camera.position.set(0, 2.7, 7.8)
+    camera.position.set(0, 2.35, 6.15)
     camera.lookAt(0, 1, 0)
   }, [camera])
   
