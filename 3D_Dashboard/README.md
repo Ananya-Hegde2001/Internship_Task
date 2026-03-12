@@ -1,152 +1,145 @@
-# 3D Dashboard Widget - Premium Sales Analytics
+# 3D Dashboard Widget
 
-A stunning, premium 3D dashboard widget that visualizes monthly sales data as an interactive 3D bar chart. Built with React Three Fiber, featuring smooth animations, hover effects, and professional styling.
+Interactive 3D sales dashboard built with React + Three.js (React Three Fiber).
+The current design uses a dark, cinematic analytics theme with teal accents, a live status header, metric cards, and a fully interactive 3D bar scene.
 
-## Features
+## Design Overview
 
-✨ **3D Visualization**
-- Interactive 3D bar chart using Three.js
-- Smooth animations with cubic easing
-- Multi-colored bars with metallic effects
+The UI is structured in three layers:
 
-🎨 **Premium Design**
-- Modern gradient background
-- Glass-morphism UI elements
-- Real-time tooltips
-- Smooth hover effects with glow
+1. Header layer
+- Live status pill with animated pulse dot
+- Primary title: "Monthly Sales Overview"
+- Subtitle: "Interactive 3D revenue visualization - FY 2026"
 
-🖱️ **Interactivity**
-- Orbit controls for camera manipulation
-- Auto-rotating scene for cinematic effect
-- Hover-to-highlight with value display
-- Zoom and pan controls
+2. Metrics layer
+- Four summary cards:
+  - Total Revenue
+  - Monthly Avg
+  - Peak Month
+  - Growth (vs first month)
+- Hover lift and shine effects for each card
 
-⚡ **Performance**
-- Optimized Three.js rendering
-- Efficient state management with Zustand
-- Smooth 60fps animations
-- Responsive design
+3. Visualization layer
+- 3D revenue bars for Jan-Dec
+- Value axis with formatted USD ticks
+- Month labels, top value labels, and floor grid
+- Tooltip on hover with exact monthly value
 
-## Prerequisites
+## Visual Style
 
-- Node.js 16+ and npm/yarn
-- Modern web browser with WebGL support
+- Theme: Deep navy + cyan/teal highlight palette
+- Lighting: Ambient + spot + point lights for premium depth
+- Materials: Metallic and clearcoat bars, glow on hover
+- Motion: Entrance bar growth animation and subtle scene autorotation
+- Responsiveness: Metric grid collapses from 4 columns to 2 and then 1 on smaller screens
 
-## Installation
+## Interaction Model
 
-1. **Clone or navigate to the project directory:**
-```bash
-cd Internship_Task
+- Drag: Rotate scene
+- Scroll/pinch: Zoom in/out
+- Hover on bar:
+  - Highlights bar with glow + wireframe outline
+  - Updates floating tooltip with month and currency value
+- Camera constraints:
+  - Pan disabled for controlled framing
+  - Polar/distance limits to keep data centered
+
+## Tech Stack
+
+- React 18
+- Three.js
+- @react-three/fiber
+- @react-three/drei
+- Zustand
+- Vite
+
+## Project Structure
+
+```text
+src/
+  main.jsx
+  App.jsx
+  App.css
+  components/
+    Dashboard3D.jsx
+    Dashboard3D.css
+    Bar3D.jsx
+    CameraController.jsx
+  store/
+    chartStore.js
 ```
 
-2. **Install dependencies:**
+## Setup
+
+### Prerequisites
+
+- Node.js 16+
+- npm
+- Browser with WebGL support
+
+### Install
+
 ```bash
 npm install
 ```
 
-## Running the Project
+### Run (Development)
 
-### Development Mode
 ```bash
 npm run dev
 ```
-The dashboard will automatically open at `http://localhost:3000`
 
-### Build for Production
+Dev server runs at: `http://localhost:3000`
+
+### Build (Production)
+
 ```bash
-npm build
+npm run build
 ```
 
-### Preview Production Build
+### Preview (Production Build)
+
 ```bash
 npm run preview
 ```
 
-## Project Structure
+### Windows Quick Start
 
-```
-src/
-├── main.jsx                 # React entry point
-├── App.jsx                  # Main app component
-├── App.css                  # App styles
-├── components/
-│   ├── Dashboard3D.jsx      # Main dashboard component
-│   ├── Dashboard3D.css      # Dashboard styles
-│   ├── Bar3D.jsx            # Individual 3D bar component
-│   └── CameraController.jsx # Camera setup component
-└── store/
-    └── chartStore.js        # Zustand state management
+```bat
+start.bat
 ```
 
-## Customization
+## Data and Metrics
 
-### Modify Sales Data
-Edit the `DATA` array in [Dashboard3D.jsx](src/components/Dashboard3D.jsx):
+- Data source is currently local and defined in `src/components/Dashboard3D.jsx`
+- Dashboard computes:
+  - Total revenue
+  - Monthly average
+  - Peak month
+  - Growth percentage from first to last month
 
-```javascript
-const DATA = [
-  { month: 'Jan', value: 45000 },
-  { month: 'Feb', value: 52000 },
-  // ... add more months
-]
-```
+## Customization Guide
 
-### Change Bar Colors
-Modify the color array in [Bar3D.jsx](src/components/Bar3D.jsx):
+1. Update monthly data
+- Edit `DATA` in `src/components/Dashboard3D.jsx`
 
-```javascript
-const baseColor = [
-  0x3b82f6, // Blue
-  0x8b5cf6, // Purple
-  // ... customize colors
-][index % 8]
-```
+2. Change color palette
+- Edit `baseColor` array in `src/components/Bar3D.jsx`
 
-### Adjust Animation Speed
-In [Bar3D.jsx](src/components/Bar3D.jsx), modify the `duration`:
+3. Tune animation timing
+- Edit `duration` in `src/components/Bar3D.jsx`
 
-```javascript
-const duration = 1200 // Animation duration in milliseconds
-```
+4. Adjust camera behavior
+- Edit orbit settings in `src/components/Dashboard3D.jsx`
+- Edit initial camera placement in `src/components/CameraController.jsx`
 
-### Camera Position
-In [CameraController.jsx](src/components/CameraController.jsx):
-
-```javascript
-camera.position.set(5, 4, 8) // Adjust X, Y, Z position
-```
-
-## Technologies Used
-
-- **React 18** - UI framework
-- **Three.js (r128)** - 3D rendering engine
-- **React Three Fiber** - React renderer for Three.js
-- **Drei** - Useful helpers for React Three Fiber
-- **Zustand** - Lightweight state management
-- **Vite** - Modern build tool
-- **CSS3** - Styling with animations and effects
-
-## Browser Compatibility
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- Modern mobile browsers (limited)
-
-## Performance Tips
-
-1. Reduce the number of bars if experiencing performance issues
-2. Decrease `autoRotateSpeed` in OrbitControls for smoother rotation
-3. Disable shadow maps on low-end devices
-4. Use `dpr={1}` instead of `dpr={2}` for better performance on mobile
-
-## License
-
-MIT - Feel free to use this for your projects!
+5. Restyle dashboard shell/cards
+- Edit classes in `src/components/Dashboard3D.css`
 
 ## Notes
 
-- The dashboard uses hardcoded data (no API calls)
-- All animations are optimized for smooth 60fps performance
-- The design is responsive but works best on desktop/large screens
-- Tooltips appear on hover with formatted currency values
+- Current implementation is client-side only (no API integration)
+- Designed for both desktop and mobile layouts, with best spatial experience on desktop
+- Tooltip values are formatted in USD
+- Axis scale adapts to the maximum value in the dataset
