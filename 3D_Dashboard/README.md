@@ -1,5 +1,7 @@
 # 3D Dashboard Widget
 
+https://github.com/user-attachments/assets/9e0b7669-b7e4-44a4-949e-5b33ecefa11f
+
 Interactive 3D sales dashboard built with React + Three.js (React Three Fiber).
 The current design uses a dark, cinematic analytics theme with teal accents, a live status header, metric cards, and a fully interactive 3D bar scene.
 
